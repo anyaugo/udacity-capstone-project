@@ -36,8 +36,9 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            sudo apt-get -y -qq update
-            sudo apt-get -y -qq install awscli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - setup_remote_docker:
           docker_layer_caching: false
       - run:
