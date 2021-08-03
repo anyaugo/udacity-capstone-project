@@ -6,4 +6,4 @@ app = Flask(__name__)
 def index():
     return 'Hello from Chibundu App version 1.0!'
 
-app.runn(host='0.0.0.0', port=81)
+app.run(host='0.0.0.0', port=81)
