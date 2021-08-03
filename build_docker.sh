@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 # Authenticate ECS Repo
 aws ecr-public get-login-password --region us-east-1 | docker login --username AWS --password-stdin public.ecr.aws/v4n3e9u9
 
