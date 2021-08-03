@@ -38,10 +38,14 @@ jobs:
             - v1-dependencies-{{ checksum "requirements.txt" }}
             - v1-dependencies-
       - run:
+          name: install docker-cli
+          command: |
+            yum install docker-cli
+      - run:
           name: build docker
           command: |
             chmod +x build_docker.sh
-            ./build_docker.sh --"${CIRCLE_WORKFLOW_ID:0:7}"
+            ./build_docker.sh
       - save_cache:
           paths:
             - ./venv
