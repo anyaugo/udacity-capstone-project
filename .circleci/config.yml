@@ -30,7 +30,7 @@ jobs:
 
   build-docker:
     docker:
-      - image: python:3.7-alpine3.11
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -40,9 +40,10 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            pip install awscli
-            apk update
-            apk add --update docker-cli
+            sudo apt-get -y -qq update
+            sudo apt-get -y -qq install awscli
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: build docker
           command: |
