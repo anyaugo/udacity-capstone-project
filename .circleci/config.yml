@@ -41,7 +41,7 @@ jobs:
           name: install dependencies
           command: |
             pip install awscli
-            apk udpate
+            apk update
             apk add --update docker-cli
       - run:
           name: build docker
