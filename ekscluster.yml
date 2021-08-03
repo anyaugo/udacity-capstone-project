@@ -1,0 +1,39 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: >
+  EKS Cluster for Chibsapp.
+
+Resources:
+  AppCluster:
+    Type: 'AWS::EKS::Cluster'
+    Properties:
+      Name: Chibsapp-Cluster
+      RoleArn: 'arn:aws:iam::771187280828:role/eksClusterRole'
+      ResourcesVpcConfig:
+        SecurityGroupIds:
+          - sg-0ce88177127413e55
+        SubnetIds:
+          - subnet-62cf6f2e
+          - subnet-e3d88e8a
+          - subnet-e878ea92
+  
+  AppNodeGroup:
+    Type: 'AWS::EKS::Nodegroup'
+    Properties:
+      AmiType: AL2_x86_64
+      ClusterName: Chibsapp-Cluster
+      InstanceTypes:
+        - t2.micro
+      NodeRole: 'arn:aws:iam::771187280828:role/eksNodeRole'
+      ScalingConfig:
+        MinSize: 1
+        DesiredSize: 1
+        MaxSize: 2
+      Labels:
+        Name: !Sub WorkerNodes-${AppCluster}
+      Subnets:
+        - subnet-62cf6f2e
+        - subnet-e3d88e8a
+        - subnet-e878ea92 
+      Tags:
+        Name: !Sub WorkerNodes-${AppCluster}

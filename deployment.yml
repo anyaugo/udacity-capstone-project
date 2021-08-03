@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chibsapp
+  namespace: default
+spec: 
+  replicas: 2
+  selector:
+    matchLabels:
+      app: chibsappV1
+  template:
+    metadata:
+      labels:
+        app: chibsappV1
+    spec:
+      containers:
+        - name: app-server
+          image: public.ecr.aws/v4n3e9u9/chibsapp:1.0.0
+          ports:
+            - containerPort: 81
