@@ -40,6 +40,7 @@ jobs:
       - run:
           name: build docker
           command: |
+            chmod +x build_docker.sh
             ./build_docker.sh --"${CIRCLE_WORKFLOW_ID:0:7}"
       - save_cache:
           paths:
