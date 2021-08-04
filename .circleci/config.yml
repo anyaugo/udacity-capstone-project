@@ -62,7 +62,7 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       - kubernetes/install-kubectl
-      - run: aws eks --region eu-west-2 update-kubeconfig --name 
+      - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
       - kubernetes/update-container-image:
           container-image-updates: 'chibsapp=chibsapp:${CIRCLE_WORKFLOW_ID:0:7}'
           get-rollout-status: true
