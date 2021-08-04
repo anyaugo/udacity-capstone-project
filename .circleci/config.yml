@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  kubernetes: circleci/kubernetes@0.12.0
+
 jobs:
   lint-files:
     docker:
@@ -47,10 +50,31 @@ jobs:
             chmod +x build_docker.sh
             ./build_docker.sh
 
+  deploy-app:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - kubernetes/install-kubectl
+      - run: aws eks --region eu-west-2 update-kubeconfig --name 
+      - kubernetes/update-container-image:
+          container-image-updates: 'chibsapp=chibsapp:${CIRCLE_WORKFLOW_ID:0:7}'
+          get-rollout-status: true
+          record: true
+          resource-name: deployment/chibsapp
+
 workflows:
   default:
     jobs:
       - lint-files
       - build-docker:
           requires: [lint-files]
+      - deploy-app:
+          requires: [build-docker]
 
