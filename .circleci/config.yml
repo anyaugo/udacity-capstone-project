@@ -125,7 +125,7 @@ jobs:
             --filters "Name=tag:project,Values=udacity" \
             --output text >> output.txt
       - run:
-          name: app-server smoke test.
+          name: app-server smoke test
           command: |
             BACKEND_IP=$( cat output.txt )
             curl http://$BACKEND_IP:32123/
