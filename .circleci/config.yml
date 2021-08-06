@@ -127,8 +127,10 @@ workflows:
       - lint-files
       - build-docker:
           requires: [lint-files]
+      - configure-node:
+          requires: [lint-files]
       - deploy-app:
-          requires: [build-docker]
+          requires: [build-docker, configure-node]
       - smoke-test:
           requires: [deploy-app]
       # - cleanup:
