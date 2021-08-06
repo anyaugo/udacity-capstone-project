@@ -37,3 +37,4 @@ Resources:
         - subnet-e878ea92 
       Tags:
         Name: !Sub WorkerNodes-${AppCluster}
+        Project: Udacity

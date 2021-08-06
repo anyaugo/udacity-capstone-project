@@ -50,6 +50,34 @@ jobs:
             chmod +x build_docker.sh
             ./build_docker.sh
 
+  deploy-ekscluster:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: deploy cluster
+          command: |
+            aws cloudformation deploy \
+              --template-file ekscluster.yml \
+              --tags project=udacity \
+              --stack-name "chibsapp-stack" 
+      - kubernetes/install-kubectl
+      - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster 
+      - run:
+          name: configure nodes
+          kubernetes/create-or-update-resource:
+            get-rollout-status: true
+            resource-file-path: aws-auth-cm.yml
+            resource-name: configmap/aws-auth
+            show-kubectl-command: true
+  
   deploy-app:
     docker:
       - image: circleci/node:13.8.0
@@ -63,11 +91,62 @@ jobs:
             sudo ./aws/install
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
-      - kubernetes/update-container-image:
-          container-image-updates: 'app-server=chibsapp:${CIRCLE_WORKFLOW_ID:0:7}'
-          get-rollout-status: true
-          record: true
-          resource-name: deployment/chibsapp
+      - run:
+          name: create pods
+          kubernetes/create-or-update-resource:
+            get-rollout-status: true
+            resource-file-path: deployment.yml
+            resource-name: deployment/chibsapp
+            show-kubectl-command: true
+      - run:
+          name: configure node service
+          kubernetes/create-or-update-resource:
+            get-rollout-status: true
+            resource-file-path: service.yml
+            resource-name: service/capp-server-service
+            show-kubectl-command: true
+  
+  smoke-test:
+    docker:
+      - image: circleci/node:13.8.0
+    steps: 
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Get app-server IP
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:project,Values=udacity" \
+            --output text >> output.txt
+      - run:
+          name: app-server smoke test.
+          command: |
+            BACKEND_IP=$( cat output.txt )
+            curl http://$BACKEND_IP:32123/
+      - kubernetes/install-kubectl
+      - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
+      - run:
+          name: rollback-deployment
+          kubernetes/rollback:
+            get-rollout-status: true
+            resource-name: deployment/chibsapp
+          when: on_fail
+  
+  cleanup:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: delete cluster
+          command: |
+            aws cloudformation delete-stack --stack-name "chibsapp-stack"
 
 workflows:
   default:
@@ -77,4 +156,8 @@ workflows:
           requires: [lint-files]
       - deploy-app:
           requires: [build-docker]
+      - smoke-test:
+          requires: [deploy-app]
+      # - cleanup:
+      #     requires: [smoke-test]
 
