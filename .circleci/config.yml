@@ -70,13 +70,11 @@ jobs:
               --stack-name "chibsapp-stack" 
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster 
-      - run:
-          name: configure nodes
-          kubernetes/create-or-update-resource:
-            get-rollout-status: true
-            resource-file-path: aws-auth-cm.yml
-            resource-name: configmap/aws-auth
-            show-kubectl-command: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: aws-auth-cm.yml
+          resource-name: configmap/aws-auth
+          show-kubectl-command: true
   
   deploy-app:
     docker:
@@ -91,20 +89,16 @@ jobs:
             sudo ./aws/install
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
-      - run:
-          name: create pods
-          kubernetes/create-or-update-resource:
-            get-rollout-status: true
-            resource-file-path: deployment.yml
-            resource-name: deployment/chibsapp
-            show-kubectl-command: true
-      - run:
-          name: configure node service
-          kubernetes/create-or-update-resource:
-            get-rollout-status: true
-            resource-file-path: service.yml
-            resource-name: service/capp-server-service
-            show-kubectl-command: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: deployment.yml
+          resource-name: deployment/chibsapp
+          show-kubectl-command: true
+      - kubernetes/create-or-update-resource:
+          get-rollout-status: true
+          resource-file-path: service.yml
+          resource-name: service/capp-server-service
+          show-kubectl-command: true
   
   smoke-test:
     docker:
@@ -131,18 +125,9 @@ jobs:
             curl http://$BACKEND_IP:32123/
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
-      - run:
-          name: configure node service
-          kubernetes/create-or-update-resource:
-            get-rollout-status: true
-            resource-file-path: service.yml
-            resource-name: service/capp-server-service
-            show-kubectl-command: true
-      # - run:
-      #     name: rollback-deployment
-      #     kubernetes/rollback:
-      #       get-rollout-status: true
-      #       resource-name: deployment/chibsapp
+      - kubernetes/rollback:
+          get-rollout-status: true
+          resource-name: deployment/chibsapp
   
   cleanup:
     docker:
