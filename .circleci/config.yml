@@ -145,7 +145,7 @@ workflows:
       - lint-files
       - build-docker:
           requires: [lint-files]
-      - deploy-ekscluter:
+      - deploy-ekscluster:
           requires: [lint-files]
       - deploy-app:
           requires: [build-docker, deploy-ekscluster]
