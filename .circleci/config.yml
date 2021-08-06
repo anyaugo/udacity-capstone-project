@@ -69,7 +69,7 @@ jobs:
           resource-file-path: deployment.yml
           resource-name: deployment/chibsapp
           show-kubectl-command: true
-       - kubernetes/create-or-update-resource:
+      - kubernetes/create-or-update-resource:
           # container-image-updates: 'app-server=chibsapp:${CIRCLE_WORKFLOW_ID:0:7}'
           get-rollout-status: true
           resource-file-path: service.yml
