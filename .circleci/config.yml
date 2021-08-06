@@ -64,7 +64,7 @@ jobs:
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
       - kubernetes/update-container-image:
-          container-image-updates: 'app-server=chibsapp:${CIRCLE_WORKFLOW_ID:0:7}'
+          container-image-updates: 'app-server=cchibsapp:${CIRCLE_WORKFLOW_ID:0:7}'
           get-rollout-status: true
           resource-name: deployment/chibsapp
           show-kubectl-command: true
