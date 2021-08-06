@@ -58,10 +58,10 @@ jobs:
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
       - kubernetes/create-or-update-resource:
-        get-rollout-status: true
-        resource-file-path: aws-auth-cm.yml
-        resource-name: configmap/aws-auth
-        show-kubectl-command: true
+          get-rollout-status: true
+          resource-file-path: aws-auth-cm.yml
+          resource-name: configmap/aws-auth
+          show-kubectl-command: true
 
   deploy-app:
     docker:
