@@ -85,9 +85,9 @@ jobs:
           name: Get app-server IP
           command: |
             aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[0].PublicIpAddress' \
-            --filters "Name=tag:project,Values=udacity" \
+            --query 'Reservations[*].Instances[1].PublicIpAddress' \
             --output text >> output.txt
+            cat output.txt
       - run:
           name: app-server smoke test
           command: |
