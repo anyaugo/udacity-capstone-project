@@ -145,8 +145,10 @@ workflows:
       - lint-files
       - build-docker:
           requires: [lint-files]
+      - deploy-ekscluter:
+          requires: [lint-files]
       - deploy-app:
-          requires: [build-docker]
+          requires: [build-docker, deploy-ekscluster]
       - smoke-test:
           requires: [deploy-app]
       # - cleanup:
