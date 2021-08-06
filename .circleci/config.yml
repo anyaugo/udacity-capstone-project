@@ -132,10 +132,17 @@ jobs:
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
       - run:
-          name: rollback-deployment
-          kubernetes/rollback:
+          name: configure node service
+          kubernetes/create-or-update-resource:
             get-rollout-status: true
-            resource-name: deployment/chibsapp
+            resource-file-path: service.yml
+            resource-name: service/capp-server-service
+            show-kubectl-command: true
+      # - run:
+      #     name: rollback-deployment
+      #     kubernetes/rollback:
+      #       get-rollout-status: true
+      #       resource-name: deployment/chibsapp
   
   cleanup:
     docker:
