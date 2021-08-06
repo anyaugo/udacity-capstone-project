@@ -133,11 +133,9 @@ jobs:
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
       - run:
           name: rollback-deployment
-          command: 
-            kubernetes/rollback:
-              get-rollout-status: true
-              resource-name: deployment/chibsapp
-          when: on_fail
+          kubernetes/rollback:
+            get-rollout-status: true
+            resource-name: deployment/chibsapp
   
   cleanup:
     docker:
