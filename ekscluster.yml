@@ -11,7 +11,7 @@ Resources:
       RoleArn: 'arn:aws:iam::771187280828:role/eksClusterRole'
       ResourcesVpcConfig:
         SecurityGroupIds:
-          - sg-0ce88177127413e55
+          - sg-0efd1fb9b713cda64
         SubnetIds:
           - subnet-62cf6f2e
           - subnet-e3d88e8a

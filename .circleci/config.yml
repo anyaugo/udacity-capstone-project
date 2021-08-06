@@ -49,32 +49,6 @@ jobs:
           command: |
             chmod +x build_docker.sh
             ./build_docker.sh
-
-  deploy-ekscluster:
-    docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      - run:
-          name: install dependencies
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: deploy cluster
-          command: |
-            aws cloudformation deploy \
-              --template-file ekscluster.yml \
-              --tags project=udacity \
-              --stack-name "chibsapp-stack" 
-      - kubernetes/install-kubectl
-      - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster 
-      - kubernetes/create-or-update-resource:
-          get-rollout-status: true
-          resource-file-path: aws-auth-cm.yml
-          resource-name: configmap/aws-auth
-          show-kubectl-command: true
   
   deploy-app:
     docker:
@@ -145,10 +119,8 @@ workflows:
       - lint-files
       - build-docker:
           requires: [lint-files]
-      - deploy-ekscluster:
-          requires: [lint-files]
       - deploy-app:
-          requires: [build-docker, deploy-ekscluster]
+          requires: [build-docker]
       - smoke-test:
           requires: [deploy-app]
       # - cleanup:
