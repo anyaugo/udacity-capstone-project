@@ -76,7 +76,7 @@ jobs:
             sudo ./aws/install
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
-      - kubernetes/ucreate-or-update-resource:
+      - kubernetes/create-or-update-resource:
           get-rollout-status: true
           resource-file-path: deployment.yml
           resource-name: deployment/chibsapp
