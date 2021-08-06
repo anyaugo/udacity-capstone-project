@@ -134,9 +134,9 @@ jobs:
       - run:
           name: rollback-deployment
           command: 
-          kubernetes/rollback:
-            get-rollout-status: true
-            resource-name: deployment/chibsapp
+            kubernetes/rollback:
+              get-rollout-status: true
+              resource-name: deployment/chibsapp
           when: on_fail
   
   cleanup:
