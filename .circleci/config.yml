@@ -84,13 +84,13 @@ jobs:
           name: Get app-server IP
           command: |
             aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[1].PublicIpAddress' \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
             --output text >> output.txt
-            cat output.txt
+            head -n 1 output.txt
       - run:
           name: app-server smoke test
           command: |
-            BACKEND_IP=$( cat output.txt )
+            BACKEND_IP=$( head -n 1 output.txt )
             curl http://$BACKEND_IP:32123/
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
