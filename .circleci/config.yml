@@ -50,6 +50,19 @@ jobs:
             chmod +x build_docker.sh
             ./build_docker.sh
   
+  configure-node:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - kubernetes/install-kubectl
+      - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
+      - kubernetes/create-or-update-resource:
+        get-rollout-status: true
+        resource-file-path: aws-auth-cm.yml
+        resource-name: configmap/aws-auth
+        show-kubectl-command: true
+
   deploy-app:
     docker:
       - image: circleci/node:13.8.0
@@ -63,15 +76,10 @@ jobs:
             sudo ./aws/install
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
-      - kubernetes/create-or-update-resource:
+      - kubernetes/ucreate-or-update-resource:
           get-rollout-status: true
           resource-file-path: deployment.yml
           resource-name: deployment/chibsapp
-          show-kubectl-command: true
-      - kubernetes/create-or-update-resource:
-          get-rollout-status: true
-          resource-file-path: service.yml
-          resource-name: service/capp-server-service
           show-kubectl-command: true
   
   smoke-test:
