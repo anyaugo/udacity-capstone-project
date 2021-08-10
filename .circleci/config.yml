@@ -98,10 +98,7 @@ jobs:
           name: rollback deployment
           command: |
             kubectl rollout undo deployment/chibsapp
-          # when: on_fail
-      # - kubernetes/rollback:
-          # get-rollout-status: true
-          # resource-name: deployment/chibsapp
+          when: on_fail
   
   cleanup:
     docker:
@@ -123,7 +120,7 @@ workflows:
           requires: [build-docker]
       - smoke-test:
           requires: [deploy-app]
-      # - cleanup:
-      #     requires: [smoke-test]
-      #
+      - cleanup:
+          requires: [smoke-test]
+      
 
