@@ -94,9 +94,14 @@ jobs:
             curl http://$BACKEND_IP:32123/
       - kubernetes/install-kubectl
       - run: aws eks --region eu-west-2 update-kubeconfig --name Chibsapp-Cluster
-      - kubernetes/rollback:
-          get-rollout-status: true
-          resource-name: deployment/chibsapp
+      - run:
+          name: rollback deployment
+          command: |
+            kubectl rollout undo deployment/chibsapp
+          # when: on_fail
+      # - kubernetes/rollback:
+          # get-rollout-status: true
+          # resource-name: deployment/chibsapp
   
   cleanup:
     docker:

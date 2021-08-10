@@ -11,7 +11,7 @@ Resources:
       RoleArn: 'arn:aws:iam::771187280828:role/eksClusterRole'
       ResourcesVpcConfig:
         SecurityGroupIds:
-          - sg-0efd1fb9b713cda64
+          - sg-0ce88177127413e55
         SubnetIds:
           - subnet-62cf6f2e
           - subnet-e3d88e8a
@@ -26,9 +26,9 @@ Resources:
         - t2.micro
       NodeRole: 'arn:aws:iam::771187280828:role/eksNodeRole'
       ScalingConfig:
-        MinSize: 1
-        DesiredSize: 1
-        MaxSize: 2
+        MinSize: 2
+        DesiredSize: 2
+        MaxSize: 3
       Labels:
         Name: !Sub WorkerNodes-${AppCluster}
       Subnets:
