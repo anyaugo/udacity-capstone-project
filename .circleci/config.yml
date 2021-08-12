@@ -120,7 +120,7 @@ workflows:
           requires: [build-docker]
       - smoke-test:
           requires: [deploy-app]
-      - cleanup:
-          requires: [smoke-test]
+      # - cleanup:
+      #     requires: [smoke-test]
       
 
